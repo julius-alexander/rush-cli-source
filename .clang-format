@@ -1,0 +1,11 @@
+---
+AlignConsecutiveMacros: "true"
+AlignTrailingComments: "true"
+IndentWidth: "4"
+PointerAlignment: Right
+SpaceAfterLogicalNot: "false"
+TabWidth: "4"
+UseTab: ForIndentation
+ColumnLimit: 90
+---
+
