@@ -120,9 +120,9 @@ int che_x_builtin(char **argsv, char **user_path) {
 		}
 	}
 
+	// it is an error for exit to be run with args
 	else if (strcmp(argsv[0], "exit") == 0) {
 		isBuiltin = TRUE;
-		// it is an error for exit to be run with args
 		if (strcmp(argsv[1], IMPOSSIBLE_STRING) == 0) {
 			builtin_exit();
 		} else {
@@ -195,4 +195,9 @@ void insert_null(char **argsv) {
 			argsv[i] = NULL;
 		}
 	}
+}
+
+int detect_redir_error(char *single_command) {
+	return FALSE;
+	;
 }
