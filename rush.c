@@ -1,7 +1,22 @@
 #include "helper.h"
 #include <stdio.h>
+#include <sys/wait.h>
 
 int main(int argc, char **argv) {
+
+	// ========================================================================
+	// testing
+	// TEST: parse error
+	//	char trimmed_raw_input[255];
+	//	strcpy(trimmed_raw_input, "& ls");
+	//	if (detect_parse_errors(trimmed_raw_input)) {
+	//		puts("error detected");
+	//	} else {
+	//		puts("no error detected");
+	//	}
+	//	exit(0);
+
+	// ========================================================================
 
 	// it is an error to run rush with args
 	if (argc > 1) {
@@ -12,34 +27,23 @@ int main(int argc, char **argv) {
 	char path_to_cmd[255];    // to be passed in execv
 	char raw_user_input[255]; // pre-parsed input
 
-	// no more than 20 paths, each path no more than 100 chars
-	char user_path[MAX_PATH][MAX_BUFFER];
+	// no more than 20 paths, each path no more than 255 chars
+	char **user_path;
+	init_2d_arr(&user_path, MAX_PATH, MAX_BUFFER);
+	reset_2d_arr(&user_path, MAX_PATH);
 	strcpy(user_path[0], "/bin/"); // configure default path
 
-	char *argsv[MAX_ARGS];
+	char **argsv;
+	init_2d_arr(&argsv, MAX_ARGS, MAX_BUFFER);
+	reset_2d_arr(&argsv, MAX_ARGS); // init all to NULL
 
-	// TEST:
-	// strcpy(user_path[1], "/usr/bin/");
-	argsv[0] = malloc((strlen("path") * sizeof(char)) + 1);
-	strcpy(argsv[0], "path");
-	argsv[1] = malloc((strlen("/bin/") * sizeof(char)) + 1);
-	strcpy(argsv[1], "/bin/");
-	argsv[2] = malloc((strlen("/usr/bin/") * sizeof(char)) + 1);
-	strcpy(argsv[2], "/usr/bin/");
-
-	builtin_path(user_path, argsv);
-	puts("debug print");
-	int i;
-	for (i = 0; i < 2; i++) {
-		puts(user_path[i]);
-	}
-	builtin_exit();
-
-	// TODO: will need a configurable (FILE *stream) for redirection?
+	char **raw_single_commands;
+	init_2d_arr(&raw_single_commands, MAX_CMDS, MAX_BUFFER);
+	reset_2d_arr(&raw_single_commands, MAX_CMDS);
 
 	while (TRUE) {
-
-		reset_argv(argsv); // init all to NULL
+		reset_2d_arr(&argsv, MAX_ARGS); // init all to NULL
+		reset_2d_arr(&raw_single_commands, MAX_CMDS);
 
 		// print shell message
 		rush_cli_prompt();
@@ -47,30 +51,49 @@ int main(int argc, char **argv) {
 		// take raw input
 		fgets(raw_user_input, MAX_BUFFER, stdin);
 
-		// parse and build command
-
-		rush_parse(argsv, raw_user_input);
-
-		// handler for empty input
-		if (che_x_builtin(argsv, user_path)) {
+		// user entered empty line
+		if (strlen(raw_user_input) <= 1) {
 			continue;
 		}
 
-		int rc = fork();
-		if (rc < 0) {
-			// lmaooo im ded XD
-			rush_report_error(stdout);
-		} else if (rc == 0) {
-			// I am baby :3
-			// path_to_cmd = "\bin\{cmd}"
-			strcpy(path_to_cmd, user_path[0]); // TODO: replace literal with variable
-			strcat(path_to_cmd, argsv[0]);
+		// wrap the entire rest of loop in for loop?
+		//
+		// parse(cmds_list, raw_input)
+		// for cmd in cmds_list:
+		//      if not che_x_builtin(cmd, path):
+		//
+		//          fork_ops()
+		// wait(NULL)
 
-			// execv("/bin/cat", {"cat", "helper.h", NULL});
-			execv(path_to_cmd, argsv);
-			rush_report_error(stdout);
-			builtin_exit();
+		// parse and build command
+
+		rush_parse(argsv, raw_user_input, raw_single_commands);
+
+		// check and execute cmd if builtin, otherwise fork
+		if (!che_x_builtin(argsv, user_path)) {
+
+			int located = located_path(argsv[0], user_path);
+			if (located < 0) {
+				rush_report_error(stdout);
+				continue;
+			}
+
+			int rc = fork();
+			if (rc < 0) {
+				rush_report_error(stdout);
+			}
+
+			else if (rc == 0) {
+				insert_null(argsv); // inserts NULL to terminate, instead of placeholder
+				strcpy(path_to_cmd, user_path[located]); // should be "found" instead of 0
+				strcat(path_to_cmd, argsv[0]);
+
+				execv(path_to_cmd, argsv);
+				rush_report_error(stdout);
+				builtin_exit();
+			}
 		}
+
 		wait(NULL);
 	}
 
