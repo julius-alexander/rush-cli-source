@@ -85,8 +85,11 @@ void builtin_exit(void) { exit(0); }
 // PERF: Looks good to me :3
 void builtin_path(char **new_path, char **argsv) {
 	int i;
+	char temp[MAX_BUFFER];
 	for (i = 0; i < MAX_PATH; i++) {
-		strcpy(new_path[i], argsv[i]);
+		strcpy(temp, argsv[i]);
+		strcat(temp, "/");
+		strcpy(new_path[i], temp);
 	}
 }
 
