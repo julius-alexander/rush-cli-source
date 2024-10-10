@@ -9,6 +9,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+extern FILE *stream; // for flexibility of output destination
+
 // there's no way any user would ever type this
 // this string is the result of typing "no-way-you-typed-this-on-accident"
 // while holding option and shift on Mac

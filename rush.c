@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 
 int main(int argc, char **argv) {
+	FILE *stream = stdout;
 
 	// ========================================================================
 	// testing
@@ -20,7 +21,7 @@ int main(int argc, char **argv) {
 
 	// it is an error to run rush with args
 	if (argc > 1) {
-		rush_report_error(stdout);
+		rush_report_error(stream);
 		builtin_exit();
 	}
 

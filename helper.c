@@ -1,6 +1,6 @@
 #include "helper.h"
-#include <stdio.h>
-#include <string.h>
+
+FILE *stream = NULL;
 
 void rush_cli_prompt(void) {
 	fputs("rush> ", stdout);
@@ -75,7 +75,7 @@ void split_into_single_commands(char **raw_single_commands, char *raw_user_input
 // PERF: Light work no reaction
 void builtin_cd(char *path) {
 	if (chdir(path) != 0) {
-		rush_report_error(stdout);
+		rush_report_error(stream);
 	}
 }
 
@@ -116,7 +116,7 @@ int che_x_builtin(char **argsv, char **user_path) {
 		}
 
 		else {
-			rush_report_error(stdout);
+			rush_report_error(stream);
 		}
 	}
 
@@ -126,7 +126,7 @@ int che_x_builtin(char **argsv, char **user_path) {
 		if (strcmp(argsv[1], IMPOSSIBLE_STRING) == 0) {
 			builtin_exit();
 		} else {
-			rush_report_error(stdout);
+			rush_report_error(stream);
 		}
 	}
 
