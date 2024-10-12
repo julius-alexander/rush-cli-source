@@ -1,11 +1,4 @@
 #include "helper.h"
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/fcntl.h>
-#include <unistd.h>
-
-FILE *stream = NULL;
 
 void rush_cli_prompt(void) {
 	fputs("rush> ", stdout);
@@ -18,15 +11,17 @@ void rush_report_error(void) {
 }
 
 // Parse raw user input
-void rush_parse(char **argsv, char *raw_user_input, char **raw_single_commands) {
+void rush_parse(char **argsv, char *raw_user_input, char **commands_list) {
 
 	normalize_input(raw_user_input);
 
 	// TODO: split by '&'
-	// split_into_single_commands(raw_single_commands, raw_user_input);
+	// split_into_single_commands(commands_list, raw_user_input);
 
 	// build argsv by tokenizing the normalized input
 	rush_tokenize_command(argsv, raw_user_input);
+
+	// for i in raw_single_commands
 }
 
 // PERF: resets to default vals, no need for realloc() or free()
@@ -37,14 +32,14 @@ void reset_str_arr(char ***arr, int arr_size) {
 	}
 }
 void normalize_input(char *buffer) {
-	// remove leading and trailing whitespace,
-	// ensure exactly 1 whitespace char between words, '&', and '>'
+	// removes leading and trailing whitespace,
+	// ensures exactly 1 whitespace char lies between words, '&', and '>'
 
 	char temp_buffer[MAX_BUFFER];
 	int i, j;
 	int word_flag = 0;
 
-	// replace illegal inputs with whitespace
+	// write valid contents of buffer to temp_buffer
 	for (i = 0, j = 0; i < strlen(buffer); i++) {
 
 		// encounter any char
@@ -76,7 +71,7 @@ void normalize_input(char *buffer) {
 		}
 	}
 
-	temp_buffer[j] = '\0'; // PERF: not including this line lead to HOURS of bug-chasing
+	temp_buffer[j] = '\0'; // PERF: forgetting this line led to HOURS of bug-chasing
 	strcpy(buffer, temp_buffer);
 }
 

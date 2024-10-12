@@ -1,6 +1,4 @@
 #include "helper.h"
-#include <stdio.h>
-#include <unistd.h>
 
 int main(int argc, char **argv) {
 
@@ -10,17 +8,21 @@ int main(int argc, char **argv) {
 		builtin_exit();
 	}
 
+	// =======================================================================================
+	// INITIALIZTIONS: only run on start-up
+	// =======================================================================================
+
 	char path_to_cmd[255];    // to be passed in execv
 	char raw_user_input[255]; // pre-parsed input
 
-	char **user_path;           // list of valid paths to check
-	char **argsv;               // a standard argv to be passed into exec
-	char **raw_single_commands; // will be cmds_list
+	char **user_path;     // list of valid paths to check
+	char **argsv;         // a standard argv to be passed into exec
+	char **commands_list; // will be cmds_list
 
 	// Allocate memory based on program requirements
 	init_str_arr(&user_path, MAX_PATHS, MAX_BUFFER);
 	init_str_arr(&argsv, MAX_ARGS, MAX_BUFFER);
-	init_str_arr(&raw_single_commands, MAX_CMDS, MAX_BUFFER);
+	init_str_arr(&commands_list, MAX_CMDS, MAX_BUFFER);
 
 	// Set default values for convenience
 	reset_str_arr(&user_path, MAX_PATHS);
@@ -28,14 +30,14 @@ int main(int argc, char **argv) {
 	strcpy(user_path[1], "/usr/bin/"); // configure default path
 
 	// =======================================================================================
-
+	// MAIN LOOP: run until exit (or fatal error?)
 	// =======================================================================================
 
 	while (TRUE) {
 
 		// Reset buffers after every line of user input
 		reset_str_arr(&argsv, MAX_ARGS);
-		reset_str_arr(&raw_single_commands, MAX_CMDS);
+		reset_str_arr(&commands_list, MAX_CMDS);
 
 		// print shell message
 		rush_cli_prompt();
@@ -59,7 +61,7 @@ int main(int argc, char **argv) {
 
 		// parse and build command
 
-		rush_parse(argsv, raw_user_input, raw_single_commands);
+		rush_parse(argsv, raw_user_input, commands_list);
 
 		// check and execute cmd if builtin, otherwise search in paths
 		if (!che_x_builtin(argsv, user_path)) {
@@ -73,11 +75,11 @@ int main(int argc, char **argv) {
 			}
 
 			int rc = fork();
-			if (rc < 0) {
+			if (rc < 0) { // no child created
 				rush_report_error();
 			}
 
-			else if (rc == 0) {
+			else if (rc == 0) { // child
 				redirection_handler(argsv);
 				// print_str_arr(argsv);
 				insert_null(argsv); // Replaces IMPOSSIBLE_STRING with actual NULL
@@ -96,8 +98,7 @@ int main(int argc, char **argv) {
 				builtin_exit();
 			}
 
-			else {
-				// parent
+			else { // parent
 				wait(NULL);
 			}
 		}
