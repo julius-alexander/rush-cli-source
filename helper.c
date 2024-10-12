@@ -1,8 +1,9 @@
 #include "helper.h"
 
 void rush_cli_prompt(void) {
-	fputs("rush> ", stdout);
 	fflush(stdout);
+	fputs("rush> ", stdout);
+	// fflush(stdout);
 }
 
 void rush_report_error(void) {

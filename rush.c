@@ -1,4 +1,5 @@
 #include "helper.h"
+#include <stdio.h>
 
 int main(int argc, char **argv) {
 
@@ -40,6 +41,7 @@ int main(int argc, char **argv) {
 		reset_str_arr(&commands_list, MAX_CMDS);
 
 		// print shell message
+		fflush(stdout);
 		rush_cli_prompt();
 
 		// take raw input
@@ -66,7 +68,7 @@ int main(int argc, char **argv) {
 		// check and execute cmd if builtin, otherwise search in paths
 		if (!che_x_builtin(argsv, user_path)) {
 
-			// find the index of the path of the command
+			// find the index of the path of the command, if valid
 			int located = located_path(argsv[0], user_path);
 			if (located < 0) {
 				printf("couldn't locate command in path... ");
@@ -81,25 +83,22 @@ int main(int argc, char **argv) {
 
 			else if (rc == 0) { // child
 				redirection_handler(argsv);
-				// print_str_arr(argsv);
 				insert_null(argsv); // Replaces IMPOSSIBLE_STRING with actual NULL
-
-				if (det_parse_errors(argsv)) {
-					puts("that was a parse error");
-					rush_report_error();
-					builtin_exit();
-				}
 
 				strcpy(path_to_cmd, user_path[located]);
 				strcat(path_to_cmd, argsv[0]);
 
+				fflush(stdout);
 				execv(path_to_cmd, argsv);
+				fflush(stdout);
+
 				rush_report_error();
 				builtin_exit();
 			}
 
 			else { // parent
 				wait(NULL);
+				fflush(stdout);
 			}
 		}
 	}
