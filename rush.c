@@ -1,50 +1,41 @@
 #include "helper.h"
 #include <stdio.h>
-#include <sys/wait.h>
+#include <unistd.h>
 
 int main(int argc, char **argv) {
-	FILE *stream = stdout;
-
-	// ========================================================================
-	// testing
-	// TEST: parse error
-	//	char trimmed_raw_input[255];
-	//	strcpy(trimmed_raw_input, "& ls");
-	//	if (detect_parse_errors(trimmed_raw_input)) {
-	//		puts("error detected");
-	//	} else {
-	//		puts("no error detected");
-	//	}
-	//	exit(0);
-
-	// ========================================================================
 
 	// it is an error to run rush with args
 	if (argc > 1) {
-		rush_report_error(stream);
+		rush_report_error();
 		builtin_exit();
 	}
 
 	char path_to_cmd[255];    // to be passed in execv
 	char raw_user_input[255]; // pre-parsed input
 
-	// no more than 20 paths, each path no more than 255 chars
-	char **user_path;
-	init_2d_arr(&user_path, MAX_PATH, MAX_BUFFER);
-	reset_2d_arr(&user_path, MAX_PATH);
-	strcpy(user_path[0], "/bin/"); // configure default path
+	char **user_path;           // list of valid paths to check
+	char **argsv;               // a standard argv to be passed into exec
+	char **raw_single_commands; // will be cmds_list
 
-	char **argsv;
-	init_2d_arr(&argsv, MAX_ARGS, MAX_BUFFER);
-	reset_2d_arr(&argsv, MAX_ARGS); // init all to NULL
+	// Allocate memory based on program requirements
+	init_str_arr(&user_path, MAX_PATHS, MAX_BUFFER);
+	init_str_arr(&argsv, MAX_ARGS, MAX_BUFFER);
+	init_str_arr(&raw_single_commands, MAX_CMDS, MAX_BUFFER);
 
-	char **raw_single_commands;
-	init_2d_arr(&raw_single_commands, MAX_CMDS, MAX_BUFFER);
-	reset_2d_arr(&raw_single_commands, MAX_CMDS);
+	// Set default values for convenience
+	reset_str_arr(&user_path, MAX_PATHS);
+	strcpy(user_path[0], "/bin/");     // configure default path
+	strcpy(user_path[1], "/usr/bin/"); // configure default path
+
+	// =======================================================================================
+
+	// =======================================================================================
 
 	while (TRUE) {
-		reset_2d_arr(&argsv, MAX_ARGS); // init all to NULL
-		reset_2d_arr(&raw_single_commands, MAX_CMDS);
+
+		// Reset buffers after every line of user input
+		reset_str_arr(&argsv, MAX_ARGS);
+		reset_str_arr(&raw_single_commands, MAX_CMDS);
 
 		// print shell message
 		rush_cli_prompt();
@@ -70,32 +61,46 @@ int main(int argc, char **argv) {
 
 		rush_parse(argsv, raw_user_input, raw_single_commands);
 
-		// check and execute cmd if builtin, otherwise fork
+		// check and execute cmd if builtin, otherwise search in paths
 		if (!che_x_builtin(argsv, user_path)) {
 
+			// find the index of the path of the command
 			int located = located_path(argsv[0], user_path);
 			if (located < 0) {
-				rush_report_error(stdout);
+				printf("couldn't locate command in path... ");
+				rush_report_error();
 				continue;
 			}
 
 			int rc = fork();
 			if (rc < 0) {
-				rush_report_error(stdout);
+				rush_report_error();
 			}
 
 			else if (rc == 0) {
-				insert_null(argsv); // inserts NULL to terminate, instead of placeholder
-				strcpy(path_to_cmd, user_path[located]); // should be "found" instead of 0
+				redirection_handler(argsv);
+				// print_str_arr(argsv);
+				insert_null(argsv); // Replaces IMPOSSIBLE_STRING with actual NULL
+
+				if (det_parse_errors(argsv)) {
+					puts("that was a parse error");
+					rush_report_error();
+					builtin_exit();
+				}
+
+				strcpy(path_to_cmd, user_path[located]);
 				strcat(path_to_cmd, argsv[0]);
 
 				execv(path_to_cmd, argsv);
-				rush_report_error(stdout);
+				rush_report_error();
 				builtin_exit();
 			}
-		}
 
-		wait(NULL);
+			else {
+				// parent
+				wait(NULL);
+			}
+		}
 	}
 
 	return 0;

@@ -1,0 +1,18 @@
+# This is a test script for general cases and edge cases for the RUSH project
+
+echo '============================================================'
+echo 'RESULTS: '
+echo '============================================================'
+echo
+echo 'rush> pwd'
+
+./rush <<-EndOfInput | sed 's/rush> //g'
+pwd
+echo
+echo (test concluded; exiting shell)
+exit
+EndOfInput
+echo ''
+echo '------------------------------------------------------------'
+echo 'Expected:'
+pwd
