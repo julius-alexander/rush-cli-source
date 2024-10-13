@@ -1,3 +1,17 @@
+/*
+ * rush.h - main header file
+ *
+ * This file is part of rush, Rapid UNIX Shell
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * */
+
 #ifndef _RUSH_
 #define _RUSH_
 
@@ -13,25 +27,24 @@
 #define ERROR_MSG         "An error has occurred\n"
 #define TRUE              1
 #define FALSE             0
-#define MAX_BUFFER        255 // maximum raw user input buffer size
+#define MAX_BUFFER        257 // maximum raw user input buffer size
 #define MAX_CMDS          128 // max number of possible commands to run in parallel
 #define MAX_ARGS          128 // number of args we can have in **argsv
 #define MAX_PATHS         20  // maximum number of paths we can have defined
 
 // Core functions
+/** @brief initializes global variables to safe values **/
 void rush_init(void);
 void rush_cli_prompt(void);
-void rush_parse(char **argv, char *raw_user_input, char **raw_single_commands);
+void rush_parse(char *raw_user_input, char **raw_single_commands);
 void rush_report_error(void);
 
 // Command processing functions
 void normalize_input(char *buffer);
-void split_into_single_commands(char **raw_single_commands, char *raw_user_input);
-void rush_tokenize_command(char **argsv, char *raw_user_input);
+void tokenize_by_delim(char **raw_single_commands, char *raw_user_input, char *delim);
 int che_x_builtin(char **argsv, char **user_path);
 int located_path(char *cmd, char **paths_to_search);
 void redirection_handler(char **argsv);
-void set_stream(char *file_name);
 void insert_null(char **argsv);
 
 // Built-in commands

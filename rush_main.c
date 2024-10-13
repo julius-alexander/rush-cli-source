@@ -1,4 +1,6 @@
 #include "rush.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
 
@@ -10,6 +12,8 @@ int main(int argc, char **argv) {
 
 	// Initialize global variables for shell
 	rush_init();
+
+	int cmd = 0;
 
 	while (TRUE) {
 
@@ -28,50 +32,50 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		// wrap the entire rest of loop in for loop?
-		//
-		// parse(cmds_list, raw_input)
-		// for cmd in cmds_list:
-		//      if not che_x_builtin(cmd, path):
-		//
-		//          fork_ops()
-		// wait(NULL)
+		// normalize_input and split by '&'
+		rush_parse(raw_user_input, commands_list);
 
-		// parse and build command
-
-		rush_parse(argsv, raw_user_input, commands_list);
-
-		// check and execute cmd if builtin, otherwise search in paths
-		if (!che_x_builtin(argsv, user_path)) {
-
-			// find the index of the path of the command, if valid
-			int located = located_path(argsv[0], user_path);
-			if (located < 0) {
-				// printf("couldn't locate command in path... ");
-				rush_report_error();
-				continue;
-			}
-
+		// FIX: Commands are executed concurrently, but rush prompt is getting messed up
+		// Parent should wait for all children to exec, but that may not be happening
+		for (cmd = 0; strcmp(commands_list[cmd], IMPOSSIBLE_STRING) != 0; cmd++) {
 			int rc = fork();
 			if (rc < 0) { // no child created
 				rush_report_error();
 			}
 
 			else if (rc == 0) { // child
-				redirection_handler(argsv);
-				insert_null(argsv); // Replaces IMPOSSIBLE_STRING with actual NULL
 
-				strcpy(path_to_cmd, user_path[located]);
-				strcat(path_to_cmd, argsv[0]);
+				normalize_input(commands_list[cmd]);
+				tokenize_by_delim(argsv, commands_list[cmd], " ");
 
-				execv(path_to_cmd, argsv);
+				// check and execute cmd if builtin, otherwise search in paths
+				if (!che_x_builtin(argsv, user_path)) {
 
-				rush_report_error();
-				builtin_exit();
-			}
+					// find the index of the path of the command, if valid
+					int located = located_path(argsv[0], user_path);
+					if (located < 0) {
+						// printf("couldn't locate command in path... ");
+						rush_report_error();
+						continue;
+					}
 
-			else { // parent
-				wait(NULL);
+					redirection_handler(argsv);
+					insert_null(argsv); // Replaces IMPOSSIBLE_STRING with actual NULL
+
+					strcpy(path_to_cmd, user_path[located]);
+					strcat(path_to_cmd, argsv[0]);
+
+					execv(path_to_cmd, argsv);
+
+					rush_report_error();
+					builtin_exit();
+				}
+
+				else { // parent
+					while (wait(&rc) > 0) {
+						;
+					}
+				}
 			}
 		}
 	}

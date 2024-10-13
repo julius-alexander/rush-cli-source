@@ -6,6 +6,6 @@ PointerAlignment: Right
 SpaceAfterLogicalNot: "false"
 TabWidth: "4"
 UseTab: ForIndentation
-ColumnLimit: 90
+ColumnLimit: 100
 ---
 

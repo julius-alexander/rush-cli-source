@@ -1,6 +1,6 @@
 #include "rush.h"
 
-// initializes any 2d array with specified size of rows and cols
+// PERF: Initializes 'row' number of strings of 'cols' size each
 void init_str_arr(char ***arr, int rows, int cols) {
 
 	*arr = (char **)calloc(rows, sizeof(char *));
@@ -11,7 +11,7 @@ void init_str_arr(char ***arr, int rows, int cols) {
 	}
 }
 
-// PERF: resets to default vals, no need for realloc() or free()
+// PERF: Resets to default vals, no need for realloc() or free()
 void reset_str_arr(char ***arr, int arr_size) {
 	int i;
 	for (i = 0; i < arr_size; i++) {
@@ -19,7 +19,7 @@ void reset_str_arr(char ***arr, int arr_size) {
 	}
 }
 
-// debug purposes only!
+// NOTE: debug purposes only!
 void print_str_arr(char **argsv) {
 	int i = 0;
 	while (argsv[i] != NULL) {
