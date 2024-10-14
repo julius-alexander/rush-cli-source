@@ -1,14 +1,21 @@
 #ifndef PROCESSING
 #define PROCESSING
 
+#include <ctype.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 // Command processing functions
+void rush_build_cmds_list(char *raw_user_input, char **commands_list);
 void normalize_input(char *buffer);
 void split_into_single_commands(char **raw_single_commands, char *raw_user_input);
-void rush_tokenize_command(char **argsv, char *raw_user_input);
+void tokenize_by_delim(char **argsv, char *raw_user_input, char *delim);
 int che_x_builtin(char **argsv, char **user_path);
 int located_path(char *cmd, char **paths_to_search);
 void redirection_handler(char **argsv);
-void set_stream(char *file_name);
 void insert_null(char **argsv);
 
 #endif

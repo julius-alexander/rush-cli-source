@@ -1,6 +1,5 @@
-
 CC = gcc
-CFLAGS = -Wall -std=c99 -pedantic
+CFLAGS = -Wall
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
 TARGET = rush
@@ -14,4 +13,4 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(OBJS) $(TARGET)
+	rm *.o

@@ -1,4 +1,5 @@
-#include "rush.h"
+#include "str_arr_ops.h"
+#include "core.h"
 
 // PERF: Initializes 'row' number of strings of 'cols' size each
 void init_str_arr(char ***arr, int rows, int cols) {
