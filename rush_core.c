@@ -1,4 +1,5 @@
 #include "core.h"
+#include "processing.h"
 #include "str_arr_ops.h"
 
 // Global variables
@@ -21,13 +22,34 @@ void rush_init(void) {
 	reset_str_arr(&commands_list, MAX_CMDS);
 	reset_str_arr(&user_path, MAX_PATHS);
 
-	strcpy(user_path[0], "/bin/");	  // configure default path
-	// strcpy(user_path[1], "/usr/bin/"); // Another convenient path
+	// configure default path
+	strcpy(user_path[0], "/bin/");
+}
+
+// PERF:
+void rush_exec_child(char **user_path, char **argsv) {
+
+	// find the index of the path of the command, if valid
+	int located = located_path(argsv[0], user_path);
+	if (located < 0) {
+		rush_report_error();
+		exit(1);
+	}
+
+	redirection_handler(argsv);	   // can kill child if error occurs
+	insert_null(argsv);			   // Replaces IMPOSSIBLE_STRING with actual NULL
+
+	strcpy(path_to_cmd, user_path[located]);
+	strcat(path_to_cmd, argsv[0]);
+
+	execv(path_to_cmd, argsv);
+
+	rush_report_error();
+	exit(1);
 }
 
 // PERF: Pretty obvious ngl
 void rush_cli_prompt(void) {
-	// fflush(stdout);
 	fputs("rush> ", stdout);
 	fflush(stdout);
 }
@@ -53,15 +75,15 @@ void builtin_cd(char *path) {
 void builtin_path(char **new_path, char **argsv) {
 	int i;
 	char temp[MAX_BUFFER];
+
 	for (i = 0; i < MAX_PATHS; i++) {
+
 		char *arg_ptr = argsv[i];
-		while (isspace(*arg_ptr)) {
+		while (isspace(*arg_ptr))
 			arg_ptr++;
-		}
+
 		strcpy(temp, argsv[i]);
 		strcat(temp, "/");
 		strcpy(new_path[i], temp);
-		// puts(new_path[i]);
 	}
 }
-// echo 1 & echo 2 & echo 3 & echo 4 & echo 5 & echo 6

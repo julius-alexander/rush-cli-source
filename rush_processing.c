@@ -76,7 +76,7 @@ void normalize_input(char *buffer) {
 	// If tempBuffer[0] == '>' mark as error
 	temp_buffer[j] = '\0';	  // NOTE: Forgetting this line led to HOURS of bug-chasing '\001'
 	if (temp_buffer[0] == '>') {
-		strcpy(buffer, "exit 1");	 // mark as guaranteed error
+		strcpy(buffer, "exit 1");	 // exit 1 is a guaranteed error
 	}
 
 	// TODO: this might be doing nothing at all... dap it up
@@ -85,10 +85,8 @@ void normalize_input(char *buffer) {
 	for (left = 0; left < j - 1; left++) {
 		if (temp_buffer[left] == '&') {
 			right = left + 1;
-
 			while (isspace(temp_buffer[right]))
 				right++;
-
 			if (temp_buffer[right] == '\0') {
 				break;
 			}

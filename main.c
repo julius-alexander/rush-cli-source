@@ -1,14 +1,11 @@
 #include "core.h"
 #include "processing.h"
 #include "str_arr_ops.h"
-#include <stdio.h>
-#include <sys/wait.h>
 
 // TODO: start trimming unnecessary comments, and unnecessary code
 // like debug code or other stuff
 int main(int argc, char **argv) {
 
-	// it is an error to run rush with args
 	if (argc > 1) {
 		rush_report_error();
 		exit(1);
@@ -31,21 +28,17 @@ int main(int argc, char **argv) {
 		}
 
 		rush_cli_prompt();
-
 		fgets(raw_user_input, MAX_BUFFER, stdin);
 
-		// TODO: might be redundant
-		// user entered empty line
-		if (strlen(raw_user_input) <= 1) {
-			continue;
-		}
+		// Sanitize input string and split into single commands
+		normalize_input(raw_user_input);
+		tokenize_by_delim(commands_list, raw_user_input, "&");
+		// rush_build_cmds_list(raw_user_input, commands_list);
 
-		rush_build_cmds_list(raw_user_input, commands_list);
-
+		// TODO: could also abstract this away into something like rush_run_commands(commands_list)
+		// Would rather use a comparison to NULL than strcmp, bc it's faster
+		// but starting to look like it may not be a trivial fix
 		for (cmd = 0; strcmp(commands_list[cmd], IMPOSSIBLE_STRING) != 0; cmd++) {
-			// Sanitize input string
-			// TODO: might be redundant
-			normalize_input(commands_list[cmd]);
 			tokenize_by_delim(argsv, commands_list[cmd], " ");
 
 			// user entered empty line
@@ -53,41 +46,17 @@ int main(int argc, char **argv) {
 				continue;
 			}
 
-			// Check and execute cmd if builtin, otherwise run next command
+			// Check and execute if builtin, otherwise run next command
 			if (che_x_builtin(argsv, user_path)) {
 				continue;
 			}
 
 			fflush(stdout);
 			int rc = fork();
-			if (rc < 0) {	 // no child created
+			if (rc < 0) {
 				rush_report_error();
-			}
-
-			else if (rc == 0) {	   // child
-
-				// TODO: might be able to wrap entire block in a func rush_execute_command()
-				// void rush_execute_command(argsv, user_path);
-
-				// find the index of the path of the command, if valid
-				int located = located_path(argsv[0], user_path);
-				if (located < 0) {
-					rush_report_error();
-					exit(1);
-				}
-
-				redirection_handler(argsv);
-				insert_null(argsv);	   // Replaces IMPOSSIBLE_STRING with actual NULL
-
-				strcpy(path_to_cmd, user_path[located]);
-				strcat(path_to_cmd, argsv[0]);
-
-				// fflush(stdout);
-				execv(path_to_cmd, argsv);
-
-				rush_report_error();
-				exit(1);
-
+			} else if (rc == 0) {
+				rush_exec_child(user_path, argsv);
 			} else {
 				child_pids[num_children++] = rc;	// keep track of children
 			}
