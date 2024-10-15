@@ -1,5 +1,4 @@
 #include "str_arr_ops.h"
-#include "core.h"
 
 // PERF: Initializes 'row' number of strings of 'cols' size each
 void init_str_arr(char ***arr, int rows, int cols) {
@@ -16,11 +15,11 @@ void init_str_arr(char ***arr, int rows, int cols) {
 void reset_str_arr(char ***arr, int arr_size) {
 	int i;
 	for (i = 0; i < arr_size; i++) {
-		strcpy((*arr)[i], IMPOSSIBLE_STRING);
+		strcpy((*arr)[i], "✧(ꈍᴗꈍ)✧");
 	}
 }
 
-// NOTE: debug purposes only!
+// NOTE: debug purposes only! Might cause segfault
 void print_str_arr(char **argsv) {
 	int i = 0;
 	while (argsv[i] != NULL) {

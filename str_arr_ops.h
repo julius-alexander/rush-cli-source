@@ -1,7 +1,6 @@
 #ifndef STR_ARR_OPS
 #define STR_ARR_OPS
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

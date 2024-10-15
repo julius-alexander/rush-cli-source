@@ -24,7 +24,6 @@ extern char raw_user_input[MAX_BUFFER];	   // pre-parsed input buffer
 // Core functions
 void rush_init(void);
 void rush_cli_prompt(void);
-void rush_build_cmds_list(char *raw_user_input, char **commands_list);
 void rush_run_commands(char **commands_list);
 void rush_exec_child(char **user_path, char **argsv);
 void rush_report_error(void);

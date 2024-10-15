@@ -7,6 +7,7 @@
 int main(int argc, char **argv) {
 
 	if (argc > 1) {
+		(void)argv;	   // to silence -Wextra warnings
 		rush_report_error();
 		exit(1);
 	}
@@ -33,7 +34,6 @@ int main(int argc, char **argv) {
 		// Sanitize input string and split into single commands
 		normalize_input(raw_user_input);
 		tokenize_by_delim(commands_list, raw_user_input, "&");
-		// rush_build_cmds_list(raw_user_input, commands_list);
 
 		// TODO: could also abstract this away into something like rush_run_commands(commands_list)
 		// Would rather use a comparison to NULL than strcmp, bc it's faster

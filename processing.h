@@ -9,8 +9,7 @@
 #include <unistd.h>
 
 // Command processing functions
-void rush_build_cmds_list(char *raw_user_input, char **commands_list);
-void normalize_input(char *buffer);
+void normalize_input(char *raw_user_input);
 void split_into_single_commands(char **raw_single_commands, char *raw_user_input);
 void tokenize_by_delim(char **argsv, char *raw_user_input, char *delim);
 int che_x_builtin(char **argsv, char **user_path);

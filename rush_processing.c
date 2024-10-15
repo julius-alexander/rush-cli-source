@@ -27,40 +27,30 @@
 #include "core.h"
 #include "processing.h"
 
-// PERF: Does what it needs to do
-void rush_build_cmds_list(char *raw_user_input, char **commands_list) {
-
-	// Normalizes whitespace only
-	normalize_input(raw_user_input);
-
-	// Splits input by '&' only
-	tokenize_by_delim(commands_list, raw_user_input, "&");
-}
-
 // PERF: Removes leading, trailing whitespace; ensures only 1 space between args
-void normalize_input(char *buffer) {
+void normalize_input(char *raw_user_input) {
 	char temp_buffer[MAX_BUFFER];
 	int i = 0, j = 0;
 	int word_flag = 0;
 
 	// write valid contents of buffer to temp_buffer
-	for (i = 0, j = 0; i < strlen(buffer); i++) {
+	for (i = 0, j = 0; i < MAX_BUFFER; i++) {
 
 		// encounter any char
-		if (!isspace(buffer[i])) {
+		if (!isspace(raw_user_input[i])) {
 			word_flag = 1;
 
 			// surround & and > with exactly 1 whitespace
-			if (buffer[i] == '&' || buffer[i] == '>') {
+			if (raw_user_input[i] == '&' || raw_user_input[i] == '>') {
 				if (j > 0 && temp_buffer[j - 1] != ' ') {
 					temp_buffer[j++] = ' ';
 				}
-				temp_buffer[j++] = buffer[i];
+				temp_buffer[j++] = raw_user_input[i];
 				temp_buffer[j++] = ' ';
 			}
-			// copy buffer char into temp
+
 			else {
-				temp_buffer[j++] = buffer[i];
+				temp_buffer[j++] = raw_user_input[i];
 			}
 		}
 
@@ -76,24 +66,10 @@ void normalize_input(char *buffer) {
 	// If tempBuffer[0] == '>' mark as error
 	temp_buffer[j] = '\0';	  // NOTE: Forgetting this line led to HOURS of bug-chasing '\001'
 	if (temp_buffer[0] == '>') {
-		strcpy(buffer, "exit 1");	 // exit 1 is a guaranteed error
+		strcpy(raw_user_input, "exit 1");	 // exit 1 is a guaranteed error
 	}
 
-	// TODO: this might be doing nothing at all... dap it up
-	// detect consecutive & (ignoring whitespace) as an error
-	int left, right;
-	for (left = 0; left < j - 1; left++) {
-		if (temp_buffer[left] == '&') {
-			right = left + 1;
-			while (isspace(temp_buffer[right]))
-				right++;
-			if (temp_buffer[right] == '\0') {
-				break;
-			}
-		}
-	}
-
-	strcpy(buffer, temp_buffer);
+	strcpy(raw_user_input, temp_buffer);
 }
 
 // PERF: Just splits string by ONE (1) delimiter
