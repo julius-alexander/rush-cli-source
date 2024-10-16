@@ -1,3 +1,20 @@
+/* ======================================================================================
+ *
+ * rush_processing.h - Source file for core shell functionalities
+ *
+ * This file is part of rush, Rapid UNIX Shell
+ *
+ * Project 1 for COP 4600 at the University of South Florida, Tampa
+ *
+ * Author: John Garzon-Ferrer
+ * NetID: garzonferrer@usf.edu
+ *
+ * Date: 13 October 2024
+ *
+ * License: This project is for educational purposes only and is not intended for redistribution.
+ *
+ * ====================================================================================== */
+
 #ifndef CORE
 #define CORE
 
@@ -5,7 +22,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-// String impossible to type accidentally, used as a placeholder for safe iteration
+// String is impossible to type accidentally, used as a placeholder for safe iteration
 #define IMPOSSIBLE_STRING "✧(ꈍᴗꈍ)✧"	 // also it's kinda cute
 #define MAX_BUFFER		  255			 // maximum raw user input buffer size
 #define MAX_CMDS		  128			 // max number of possible commands to run in parallel

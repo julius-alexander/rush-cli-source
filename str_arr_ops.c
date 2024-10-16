@@ -1,3 +1,20 @@
+/* ======================================================================================
+ *
+ * str_arr_ops.c - Source file for convenient string array operations
+ *
+ * This file is part of rush, Rapid UNIX Shell
+ *
+ * Project 1 for COP 4600 at the University of South Florida, Tampa
+ *
+ * Author: John Garzon-Ferrer
+ * NetID: garzonferrer@usf.edu
+ *
+ * Date: 13 October 2024
+ *
+ * License: This project is for educational purposes only and is not intended for redistribution.
+ *
+ * ====================================================================================== */
+
 #include "str_arr_ops.h"
 
 // PERF: Initializes 'row' number of strings of 'cols' size each

@@ -1,5 +1,22 @@
-#include "core.h"
-#include "processing.h"
+/* ======================================================================================
+ *
+ * rush_core.c - Source file for core shell functionalities
+ *
+ * This file is part of rush, Rapid UNIX Shell
+ *
+ * Project 1 for COP 4600 at the University of South Florida, Tampa
+ *
+ * Author: John Garzon-Ferrer
+ * NetID: garzonferrer@usf.edu
+ *
+ * Date: 13 October 2024
+ *
+ * License: This project is for educational purposes only and is not intended for redistribution.
+ *
+ * ====================================================================================== */
+
+#include "rush_core.h"
+#include "rush_processing.h"
 #include "str_arr_ops.h"
 
 // Global variables

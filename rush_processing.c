@@ -1,31 +1,22 @@
 /* ======================================================================================
-
- * rush_processing.h - Header for input processing functions
+ *
+ * rush_processing.c - Source file for input processing functions
  *
  * This file is part of rush, Rapid UNIX Shell
  *
  * Project 1 for COP 4600 at the University of South Florida, Tampa
  *
- * This module includes functions for processing user input,
- * handling command redirection, and tokenization.
- *
  * Author: John Garzon-Ferrer
  * NetID: garzonferrer@usf.edu
- * U# 7604-0130
  *
  * Date: 13 October 2024
  *
- * Overview:
- * - Functions to normalize input, tokenize commands by delimiters,
- *   handle built-in commands, and manage file redirection.
- *
  * License: This project is for educational purposes only and is not intended for redistribution.
  *
-=========================================================================================
- */
+ * ====================================================================================== */
 
-#include "core.h"
-#include "processing.h"
+#include "rush_processing.h"
+#include "rush_core.h"
 
 // PERF: Removes leading, trailing whitespace; ensures only 1 space between args
 void normalize_input(char *raw_user_input) {
@@ -34,7 +25,7 @@ void normalize_input(char *raw_user_input) {
 	int word_flag = 0;
 
 	// write valid contents of buffer to temp_buffer
-	for (i = 0, j = 0; i < MAX_BUFFER; i++) {
+	for (i = 0, j = 0; i < strlen(raw_user_input); i++) {
 
 		// encounter any char
 		if (!isspace(raw_user_input[i])) {
@@ -87,7 +78,7 @@ void tokenize_by_delim(char **tokens_list, char *input, char *delim) {
 }
 
 // PERF: Checks and executes if command is a builtin
-int che_x_builtin(char **argsv, char **user_path) {
+int chexec_builtin(char **argsv, char **user_path) {
 	int isBuiltin = FALSE;
 
 	// CD should have exactly 1 argument!
@@ -132,9 +123,9 @@ int che_x_builtin(char **argsv, char **user_path) {
 
 // PERF: Returns the index of the path if the given command is found
 int located_path(char *cmd, char **paths_to_search) {
-	int i = 0;
 	char temp[MAX_BUFFER];
 
+	int i;
 	for (i = 0; i < MAX_PATHS; i++) {
 		strcpy(temp, paths_to_search[i]);
 		strcat(temp, cmd);
@@ -149,8 +140,8 @@ int located_path(char *cmd, char **paths_to_search) {
 
 // PERF: Determines if redirection is necessary, or if redirection error is encountered
 void redirection_handler(char **argsv) {
-	int i = 0;
 
+	int i;
 	for (i = 0; i < MAX_ARGS; i++) {
 		// reached NULL before '>', so no redirection required
 		if (strcmp(argsv[i], IMPOSSIBLE_STRING) == 0) {
@@ -180,7 +171,7 @@ void redirection_handler(char **argsv) {
 
 // PERF: Inserts NULL at first instance of IMPOSSIBLE_STRING in string array
 void insert_null(char **str_arr) {
-	int i = 0;
+	int i;
 	for (i = 0; i < MAX_ARGS; i++) {
 		if (strcmp(str_arr[i], IMPOSSIBLE_STRING) == 0) {
 			str_arr[i] = NULL;

@@ -1,5 +1,22 @@
-#include "core.h"
-#include "processing.h"
+/* ======================================================================================
+ *
+ * main.c - Entry point for rush program
+ *
+ * This file is part of rush, Rapid UNIX Shell
+ *
+ * Project 1 for COP 4600 at the University of South Florida, Tampa
+ *
+ * Author: John Garzon-Ferrer
+ * NetID: garzonferrer@usf.edu
+ *
+ * Date: 13 October 2024
+ *
+ * License: This project is for educational purposes only and is not intended for redistribution.
+ *
+ * ====================================================================================== */
+
+#include "rush_core.h"
+#include "rush_processing.h"
 #include "str_arr_ops.h"
 
 // TODO: start trimming unnecessary comments, and unnecessary code
@@ -14,9 +31,7 @@ int main(int argc, char **argv) {
 
 	// Initialize global variables for shell
 	rush_init();
-
-	int cmd = 0, i = 0;
-	int num_children = 0;
+	int cmd, num_children;
 	pid_t child_pids[MAX_CMDS];
 
 	while (TRUE) {
@@ -47,7 +62,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Check and execute if builtin, otherwise run next command
-			if (che_x_builtin(argsv, user_path)) {
+			if (chexec_builtin(argsv, user_path)) {
 				continue;
 			}
 
@@ -63,6 +78,7 @@ int main(int argc, char **argv) {
 		}
 
 		// Wait for ALL children to finish running
+		int i;
 		for (i = 0; i < MAX_CMDS; i++) {
 			waitpid(child_pids[i], NULL, 0);
 		}
