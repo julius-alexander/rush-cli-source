@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 		tokenize_by_delim(commands_list, raw_user_input, "&");
 
 		// TODO: could also abstract this away into something like rush_run_commands(commands_list)
-		// Would rather use a comparison to NULL than strcmp, bc it's faster
+		// Would rather use a comparison to NULL than strcmp inside loop condition bc it's faster
 		// but starting to look like it may not be a trivial fix
 		for (cmd = 0; strcmp(commands_list[cmd], IMPOSSIBLE_STRING) != 0; cmd++) {
 			tokenize_by_delim(argsv, commands_list[cmd], " ");
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 				continue;
 			}
 
-			// Check and execute if builtin, otherwise run next command
+			// Check and execute if command is builtin, otherwise fork and run next command
 			if (chexec_builtin(argsv, user_path)) {
 				continue;
 			}

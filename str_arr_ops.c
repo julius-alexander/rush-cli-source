@@ -36,7 +36,8 @@ void reset_str_arr(char ***arr, int arr_size) {
 	}
 }
 
-// NOTE: debug purposes only! Might cause segfault
+// NOTE: debug purposes only!
+// Might cause segfault if not properly NULL terminated
 void print_str_arr(char **argsv) {
 	int i = 0;
 	while (argsv[i] != NULL) {
