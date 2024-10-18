@@ -51,12 +51,7 @@ void normalize_input(char *raw_user_input) {
 		}
 	}
 
-	// If tempBuffer[0] == '>' mark as error
 	temp_buffer[j] = '\0';	  // NOTE: Forgetting this line led to HOURS of bug-chasing '\001'
-	if (temp_buffer[0] == '>') {
-		strcpy(raw_user_input, "exit 1");	 // exit 1 is a guaranteed error
-	}
-
 	strcpy(raw_user_input, temp_buffer);
 }
 
