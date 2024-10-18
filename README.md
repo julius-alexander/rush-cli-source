@@ -1,6 +1,7 @@
 # RUSH - Rapid UNIX Shell
 
 - Rush is a simple UNIX-like shell that supports redirection and parallel commands
+- User input is supported only up to 255 chars, longer input sequences may cause undefined behavior
 
 ## Features
 
