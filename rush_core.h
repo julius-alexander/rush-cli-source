@@ -19,7 +19,7 @@
 
 // String is impossible to type accidentally, used as a placeholder for safe iteration
 #define IMPOSSIBLE_STRING "✧(ꈍᴗꈍ)✧"	 // also it's kinda cute
-#define MAX_BUFFER		  255			 // maximum raw user input buffer size
+#define MAX_BUFFER		  256			 // maximum raw user input buffer size + NULL terminator
 #define MAX_CMDS		  128			 // max number of possible commands to run in parallel
 #define MAX_ARGS		  128			 // max number of args we can have in **argsv
 #define MAX_PATHS		  20			 // max number of paths we can have defined
@@ -27,11 +27,10 @@
 #define FALSE			  0
 
 // Global variables
-extern char **user_path;				   // list of valid paths to check
-extern char **commands_list;			   // list of commands to run
-extern char **argsv;					   // a standard argv to be passed into execv
-extern char path_to_cmd[MAX_BUFFER];	   // to be passed in execv
-extern char raw_user_input[MAX_BUFFER];	   // pre-parsed input buffer
+extern char **user_path;				// list of valid paths to check
+extern char **commands_list;			// list of commands to run
+extern char **argsv;					// a standard argv to be passed into execv
+extern char path_to_cmd[MAX_BUFFER];	// to be passed in execv
 
 // Core functions
 void rush_init(void);

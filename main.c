@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
 		}
 
 		rush_cli_prompt();
+		char raw_user_input[MAX_BUFFER];
 		fgets(raw_user_input, MAX_BUFFER, stdin);
 
 		// Sanitize input string and split into single commands

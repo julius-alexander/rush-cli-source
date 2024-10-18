@@ -15,11 +15,11 @@
 #include "str_arr_ops.h"
 
 // Global variables
-char **user_path;			 // list of valid paths to check
-char **commands_list;		 // will be cmds_list
-char **argsv;				 // a standard argv to be passed into exec
-char path_to_cmd[255];		 // to be passed in execv
-char raw_user_input[255];	 // pre-parsed input
+char **user_path;					// list of valid paths to check
+char **commands_list;				// will be cmds_list
+char **argsv;						// a standard argv to be passed into exec
+char path_to_cmd[MAX_BUFFER];		// to be passed in execv
+char raw_user_input[MAX_BUFFER];	// pre-parsed input
 
 // PERF: Set up rush shell state, one time only
 void rush_init(void) {

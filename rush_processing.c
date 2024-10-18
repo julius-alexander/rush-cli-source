@@ -15,7 +15,9 @@
 
 // PERF: Removes leading, trailing whitespace; ensures only 1 space between args
 void normalize_input(char *raw_user_input) {
-	char temp_buffer[MAX_BUFFER];
+	// if raw_user_input already matches MAX_BUFFER, we will overflow when
+	// attempting to insert whitespace between operators
+	char temp_buffer[MAX_BUFFER * 4];
 	int i = 0, j = 0;
 	int word_flag = 0;
 
