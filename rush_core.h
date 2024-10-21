@@ -27,10 +27,9 @@
 #define FALSE			  0
 
 // Global variables
-extern char **user_path;				// list of valid paths to check
-extern char **commands_list;			// list of commands to run
-extern char **argsv;					// a standard argv to be passed into execv
-extern char path_to_cmd[MAX_BUFFER];	// to be passed in execv
+extern char **user_path;		// list of valid paths to check
+extern char **commands_list;	// list of commands to run
+extern char **argsv;			// a standard argv to be passed into execv
 
 // Core functions
 void rush_init(void);

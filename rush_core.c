@@ -18,7 +18,6 @@
 char **user_path;					// list of valid paths to check
 char **commands_list;				// will be cmds_list
 char **argsv;						// a standard argv to be passed into exec
-char path_to_cmd[MAX_BUFFER];		// to be passed in execv
 char raw_user_input[MAX_BUFFER];	// pre-parsed input
 
 // PERF: Set up rush shell state, one time only
@@ -51,6 +50,7 @@ void rush_exec_child(char **user_path, char **argsv) {
 	redirection_handler(argsv);	   // can kill child if error occurs
 	insert_null(argsv);			   // Replaces IMPOSSIBLE_STRING with actual NULL
 
+	char path_to_cmd[MAX_BUFFER];
 	strcpy(path_to_cmd, user_path[located]);
 	strcat(path_to_cmd, argsv[0]);
 

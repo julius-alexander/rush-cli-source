@@ -18,3 +18,10 @@
   `echo 123 > target.txt target2.txt` is not allowed, since there are two args to the right of the redirection symbol
 - parallel commands run independently of each other, so it is possible for one command to succeed and another to fail
   for example: `pwd & not_a_command` will return the current working directory, AND the message "An error has occurred"
+
+## TODO
+
+- Replace IMPOSSIBLE_STRING with dynamic memory management:
+  Though there are no known sources of memory leaks, and this program only shows as using 1.0MB, there is no dynamic allocation or reallocation
+  of structures (everything is statically allocated to meet all possible maximum values). This means that a LOT of memory is not being used on average
+  if the user does not regularly input the maximum buffer size of 255 chars

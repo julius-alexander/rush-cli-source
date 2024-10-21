@@ -46,9 +46,7 @@ int main(int argc, char **argv) {
 		normalize_input(raw_user_input);
 		tokenize_by_delim(commands_list, raw_user_input, "&");
 
-		// TODO: could also abstract this away into something like rush_run_commands(commands_list)
-		// Would rather use a comparison to NULL than strcmp inside loop condition bc it's faster
-		// but starting to look like it may not be a trivial fix
+		// iterate through list of commands and execute in parallel
 		for (cmd = 0; strcmp(commands_list[cmd], IMPOSSIBLE_STRING) != 0; cmd++) {
 			tokenize_by_delim(argsv, commands_list[cmd], " ");
 
